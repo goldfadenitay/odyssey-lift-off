@@ -4,13 +4,16 @@
   "private": true,
   "description": "front-end demo app for Apollo's lift-off course",
   "dependencies": {
-    "@apollo/space-kit": "^9.3.1",
+    "@apollo/client": "^3.8.10",
+    "@apollo/space-kit": "^9.11.0",
     "@emotion/cache": "^11.4.0",
     "@emotion/core": "^10.1.1",
     "@emotion/react": "^11.4.0",
     "@emotion/styled": "^11.3.0",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
+    "@graphql-codegen/typescript": "^4.0.1",
+    "graphql": "^16.8.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-markdown": "^6.0.2",
     "react-player": "^2.6.0",
     "react-router-dom": "^6.8.0"
@@ -18,7 +21,8 @@
   "scripts": {
     "test": "vitest",
     "start": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "generate": "graphql-codegen"
   },
   "browserslist": {
     "production": [
@@ -33,6 +37,8 @@
     ]
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.0",
+    "@graphql-codegen/client-preset": "^4.1.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^14.5.1",
