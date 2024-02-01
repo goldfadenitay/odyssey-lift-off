@@ -12,6 +12,17 @@ export const resolvers: Resolvers = {
     tracksForHome: (_, __, { dataSources }) => {
       return dataSources.trackAPI.getTracksForHome();
     },
+    
+    /**
+     *  get a single track by ID, for the track page
+     * @param _ 
+     * @param { id } 
+     * @param { dataSources } 
+     * @returns return a single track
+     */
+    track: (_, {id}, {dataSources}) => {
+      return dataSources.trackAPI.getTrack(id);
+    },
   },
   Track: {
     /**
@@ -24,5 +35,16 @@ export const resolvers: Resolvers = {
     author: ({ authorId }, _, { dataSources }) => {
       return dataSources.trackAPI.getAuthor(authorId)
     },
+
+    /**
+     * Resolver for the 'module' field in a Track. Fetches module data using the moduleId.
+     * @param { modelId } 
+     * @param _ 
+     * @param { dataSources } 
+     * @returns a Module object
+     */
+    modules: ({ id }, _, { dataSources }) => {
+      return dataSources.trackAPI.getTrackModules(id)
+    }
   },
 };

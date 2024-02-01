@@ -1,5 +1,5 @@
 import { GraphQLResolveInfo } from 'graphql';
-import { TrackModel, AuthorModel } from './models';
+import { TrackModel, AuthorModel, ModuleModel } from './models';
 import { DataSourceContext } from './context';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
@@ -8,6 +8,7 @@ export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: 
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: { input: string; output: string; }
@@ -27,10 +28,27 @@ export type Author = {
   photo?: Maybe<Scalars['String']['output']>;
 };
 
+/** A Module is a single unit of teaching. Multiple Modules compose a Track */
+export type Module = {
+  __typename?: 'Module';
+  id: Scalars['ID']['output'];
+  /** The Module's length in minutes */
+  length?: Maybe<Scalars['Int']['output']>;
+  /** The Module's title */
+  title: Scalars['String']['output'];
+};
+
 export type Query = {
   __typename?: 'Query';
+  /** Fetch a specific track, provided a track's ID */
+  track?: Maybe<Track>;
   /** Get tracks array for homepage grid */
   tracksForHome: Array<Track>;
+};
+
+
+export type QueryTrackArgs = {
+  id: Scalars['ID']['input'];
 };
 
 /** A track is a group of Modules that teaches about a specific topic */
@@ -38,11 +56,17 @@ export type Track = {
   __typename?: 'Track';
   /** The track's main author */
   author: Author;
+  /** The track's complete description, can be in Markdown format */
+  description?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   /** The track's approximate length to complete, in minutes */
   length?: Maybe<Scalars['Int']['output']>;
+  /** The track's complete array of Modules */
+  modules: Array<Module>;
   /** The number of modules this track contains */
   modulesCount?: Maybe<Scalars['Int']['output']>;
+  /** The number of times a track has been viewed */
+  numberOfViews?: Maybe<Scalars['Int']['output']>;
   /** The track's main illustration to display in track card or track page detail */
   thumbnail?: Maybe<Scalars['String']['output']>;
   /** The track's title */
@@ -124,6 +148,7 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
+  Module: ResolverTypeWrapper<ModuleModel>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   Track: ResolverTypeWrapper<TrackModel>;
@@ -135,6 +160,7 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean']['output'];
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
+  Module: ModuleModel;
   Query: {};
   String: Scalars['String']['output'];
   Track: TrackModel;
@@ -147,15 +173,26 @@ export type AuthorResolvers<ContextType = DataSourceContext, ParentType extends 
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ModuleResolvers<ContextType = DataSourceContext, ParentType extends ResolversParentTypes['Module'] = ResolversParentTypes['Module']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  length?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type QueryResolvers<ContextType = DataSourceContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  track?: Resolver<Maybe<ResolversTypes['Track']>, ParentType, ContextType, RequireFields<QueryTrackArgs, 'id'>>;
   tracksForHome?: Resolver<Array<ResolversTypes['Track']>, ParentType, ContextType>;
 };
 
 export type TrackResolvers<ContextType = DataSourceContext, ParentType extends ResolversParentTypes['Track'] = ResolversParentTypes['Track']> = {
   author?: Resolver<ResolversTypes['Author'], ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   length?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  modules?: Resolver<Array<ResolversTypes['Module']>, ParentType, ContextType>;
   modulesCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  numberOfViews?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   thumbnail?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -163,6 +200,7 @@ export type TrackResolvers<ContextType = DataSourceContext, ParentType extends R
 
 export type Resolvers<ContextType = DataSourceContext> = {
   Author?: AuthorResolvers<ContextType>;
+  Module?: ModuleResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Track?: TrackResolvers<ContextType>;
 };

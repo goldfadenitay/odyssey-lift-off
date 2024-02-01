@@ -25,7 +25,8 @@ const config: CodegenConfig = {
         // Maps GraphQL types to TypeScript models
         mappers: {
           Track: "./models#TrackModel", // Maps 'Track' in GraphQL to 'TrackModel' in TypeScript
-          Author: "./models#AuthorModel" // Maps 'Author' to 'AuthorModel'
+          Author: "./models#AuthorModel", // Maps 'Author' to 'AuthorModel'
+          Module: "./models#ModuleModel" // Maps 'Module' to 'ModuleModel'
         },
       },
     },
