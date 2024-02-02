@@ -13,6 +13,8 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
+    "\n  mutation IncrementTrackViews($incrementTrackViewsId: ID!) {\n    incrementTrackViews(id: $incrementTrackViewsId) {\n      code\n      success\n      message\n      track {\n        id\n        numberOfViews\n      }\n    }\n  }\n": types.IncrementTrackViewsDocument,
+    "\n  query GetModule($getModuleId: ID!, $trackId: ID!) {\n    getModule(id: $getModuleId) {\n      id\n      title\n      length\n      content\n      videoUrl\n    }\n    track(id: $trackId) {\n      id\n      modules {\n        id\n        length\n        title\n      }\n      title\n    }\n  }\n": types.GetModuleDocument,
     "\n  query GetTrack($trackId: ID!) {\n    track(id: $trackId) {\n      id\n      title\n      author {\n        id\n        name\n        photo\n      }\n      thumbnail\n      length\n      modulesCount\n      numberOfViews\n      modules {\n        id\n        title\n        length\n      }\n      description\n    }\n  }\n": types.GetTrackDocument,
     "\n  query GetTracks {\n    tracksForHome {\n      id\n      title\n      thumbnail\n      length\n      modulesCount\n      author {\n        id\n        name\n        photo\n      }\n    }\n  }\n": types.GetTracksDocument,
 };
@@ -31,6 +33,14 @@ const documents = {
  */
 export function gql(source: string): unknown;
 
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation IncrementTrackViews($incrementTrackViewsId: ID!) {\n    incrementTrackViews(id: $incrementTrackViewsId) {\n      code\n      success\n      message\n      track {\n        id\n        numberOfViews\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation IncrementTrackViews($incrementTrackViewsId: ID!) {\n    incrementTrackViews(id: $incrementTrackViewsId) {\n      code\n      success\n      message\n      track {\n        id\n        numberOfViews\n      }\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query GetModule($getModuleId: ID!, $trackId: ID!) {\n    getModule(id: $getModuleId) {\n      id\n      title\n      length\n      content\n      videoUrl\n    }\n    track(id: $trackId) {\n      id\n      modules {\n        id\n        length\n        title\n      }\n      title\n    }\n  }\n"): (typeof documents)["\n  query GetModule($getModuleId: ID!, $trackId: ID!) {\n    getModule(id: $getModuleId) {\n      id\n      title\n      length\n      content\n      videoUrl\n    }\n    track(id: $trackId) {\n      id\n      modules {\n        id\n        length\n        title\n      }\n      title\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

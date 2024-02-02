@@ -38,4 +38,22 @@ export class TrackAPI extends RESTDataSource {
   getTrackModules(trackId: string) {
     return this.get<ModuleModel[]>(`track/${trackId}/modules`);
   }
+
+  /**
+   * Increment track view
+   * @param trackId 
+   * @returns Track object
+   */
+  incrementTrackViews(trackId: string) {
+    return this.patch<TrackModel>(`track/${trackId}/numberOfViews`);
+  }
+
+  /**
+   * Get a module object
+   * @param moduleId 
+   * @returns Module object
+   */
+  getModule(moduleId: string) {
+    return this.get<ModuleModel>(`module/${moduleId}`)
+  }
 }

@@ -8,6 +8,7 @@ export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: 
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -28,22 +29,55 @@ export type Author = {
   photo?: Maybe<Scalars['String']['output']>;
 };
 
+export type IncrementTrackViewsResponse = {
+  __typename?: 'IncrementTrackViewsResponse';
+  /** Similar to HTTP status code, represents the status of the mutation */
+  code: Scalars['Int']['output'];
+  /** Human-readable message for the UI */
+  message: Scalars['String']['output'];
+  /** Indicates whether the mutation was successful */
+  success: Scalars['Boolean']['output'];
+  /** Newly updated track after a successful mutation */
+  track?: Maybe<Track>;
+};
+
 /** A Module is a single unit of teaching. Multiple Modules compose a Track */
 export type Module = {
   __typename?: 'Module';
+  /** The content of the module */
+  content?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   /** The Module's length in minutes */
   length?: Maybe<Scalars['Int']['output']>;
   /** The Module's title */
   title: Scalars['String']['output'];
+  /** The module URL */
+  videoUrl?: Maybe<Scalars['String']['output']>;
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  incrementTrackViews: IncrementTrackViewsResponse;
+};
+
+
+export type MutationIncrementTrackViewsArgs = {
+  id: Scalars['ID']['input'];
 };
 
 export type Query = {
   __typename?: 'Query';
+  /** Get a module by passing a module id */
+  getModule?: Maybe<Module>;
   /** Fetch a specific track, provided a track's ID */
   track?: Maybe<Track>;
   /** Get tracks array for homepage grid */
   tracksForHome: Array<Track>;
+};
+
+
+export type QueryGetModuleArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -147,8 +181,10 @@ export type ResolversTypes = {
   Author: ResolverTypeWrapper<AuthorModel>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
+  IncrementTrackViewsResponse: ResolverTypeWrapper<Omit<IncrementTrackViewsResponse, 'track'> & { track?: Maybe<ResolversTypes['Track']> }>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Module: ResolverTypeWrapper<ModuleModel>;
+  Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   Track: ResolverTypeWrapper<TrackModel>;
@@ -159,8 +195,10 @@ export type ResolversParentTypes = {
   Author: AuthorModel;
   Boolean: Scalars['Boolean']['output'];
   ID: Scalars['ID']['output'];
+  IncrementTrackViewsResponse: Omit<IncrementTrackViewsResponse, 'track'> & { track?: Maybe<ResolversParentTypes['Track']> };
   Int: Scalars['Int']['output'];
   Module: ModuleModel;
+  Mutation: {};
   Query: {};
   String: Scalars['String']['output'];
   Track: TrackModel;
@@ -173,14 +211,29 @@ export type AuthorResolvers<ContextType = DataSourceContext, ParentType extends 
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type ModuleResolvers<ContextType = DataSourceContext, ParentType extends ResolversParentTypes['Module'] = ResolversParentTypes['Module']> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  length?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+export type IncrementTrackViewsResponseResolvers<ContextType = DataSourceContext, ParentType extends ResolversParentTypes['IncrementTrackViewsResponse'] = ResolversParentTypes['IncrementTrackViewsResponse']> = {
+  code?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  track?: Resolver<Maybe<ResolversTypes['Track']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ModuleResolvers<ContextType = DataSourceContext, ParentType extends ResolversParentTypes['Module'] = ResolversParentTypes['Module']> = {
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  length?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  videoUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type MutationResolvers<ContextType = DataSourceContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  incrementTrackViews?: Resolver<ResolversTypes['IncrementTrackViewsResponse'], ParentType, ContextType, RequireFields<MutationIncrementTrackViewsArgs, 'id'>>;
+};
+
 export type QueryResolvers<ContextType = DataSourceContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  getModule?: Resolver<Maybe<ResolversTypes['Module']>, ParentType, ContextType, RequireFields<QueryGetModuleArgs, 'id'>>;
   track?: Resolver<Maybe<ResolversTypes['Track']>, ParentType, ContextType, RequireFields<QueryTrackArgs, 'id'>>;
   tracksForHome?: Resolver<Array<ResolversTypes['Track']>, ParentType, ContextType>;
 };
@@ -200,7 +253,9 @@ export type TrackResolvers<ContextType = DataSourceContext, ParentType extends R
 
 export type Resolvers<ContextType = DataSourceContext> = {
   Author?: AuthorResolvers<ContextType>;
+  IncrementTrackViewsResponse?: IncrementTrackViewsResponseResolvers<ContextType>;
   Module?: ModuleResolvers<ContextType>;
+  Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Track?: TrackResolvers<ContextType>;
 };

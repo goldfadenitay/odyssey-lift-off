@@ -59,8 +59,7 @@ const TrackDetail: React.FC<{track: any}> = ({track}) => {
             <AuthorName>{author.name}</AuthorName>
           </DetailItem>
           <div>
-            {/* Need to comment this out until Link is placed within a Router */}
-            {/* <StyledLink to={`./module/${modules[0]['id']}`}> */}
+            <StyledLink to={`./module/${modules[0]['id']}`}>
               <Button
                 icon={<IconRun width="20px" />}
                 color={colors.pink.base}
@@ -68,7 +67,7 @@ const TrackDetail: React.FC<{track: any}> = ({track}) => {
               >
                 Start Track
               </Button>
-            {/* </StyledLink> */}
+            </StyledLink>
           </div>
         </DetailRow>
         <ModuleListContainer>

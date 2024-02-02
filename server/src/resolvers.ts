@@ -1,3 +1,4 @@
+import { GraphQLError } from 'graphql';
 import { Resolvers } from "./types";
 
 export const resolvers: Resolvers = {
@@ -14,7 +15,7 @@ export const resolvers: Resolvers = {
     },
     
     /**
-     *  get a single track by ID, for the track page
+     * get a single track by ID, for the track page
      * @param _ 
      * @param { id } 
      * @param { dataSources } 
@@ -23,6 +24,53 @@ export const resolvers: Resolvers = {
     track: (_, {id}, {dataSources}) => {
       return dataSources.trackAPI.getTrack(id);
     },
+
+    /**
+     * get a single module by ID for the module page
+     * @param _ 
+     * @param { id } - The module id
+     * @param { dataSources } - The data sources
+     * @returns a single module
+     */
+    getModule: (_, {id}, {dataSources}) => {
+      return dataSources.trackAPI.getModule(id)
+    }
+  },
+  Mutation: {
+    /**
+     * Increment track views
+     * @param _ 
+     * @param { trackId } 
+     * @param { dataSources } 
+     * @returns return a single track
+     */
+    incrementTrackViews: async (_, { id }, { dataSources }) => {
+      try {
+        const track = await dataSources.trackAPI.incrementTrackViews(id)
+        return {
+          code: 200,
+          success: true,
+          message: `Successfully incremented number of views for track ${id}`,
+          track,
+        }
+      } catch (err) {
+        if (err instanceof GraphQLError) {
+          return {
+            code: (err.extensions.response as { status: number }).status,
+            success: false,
+            message: (err.extensions.response as { body: string }).body,
+            track: null
+          }
+        }
+
+        return {
+          code: 500,
+          success: false,
+          message: 'Internal Server Error',
+          track: null,
+        }
+      }
+    }
   },
   Track: {
     /**
